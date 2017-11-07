@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.ionic.starter" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>MyApp</name>
-    <description>An awesome Ionic/Cordova app.</description>
-    <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
+<widget id="bzh.jmsinquin.malistedecourses" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Ma liste de courses</name>
+    <description>Complètez votre liste où que vous soyez. Retrouvez la classée par rayon pendant vos achats et supprimez l'article acheté.</description>
+    <author email="jiem51@gmail.com" href="http://otoboxblog.canalblog.com/">Jean-Marc SINQUIN</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
