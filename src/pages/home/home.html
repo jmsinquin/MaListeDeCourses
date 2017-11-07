@@ -1,18 +1,44 @@
 <ion-header>
   <ion-navbar>
     <button ion-button menuToggle>
-      <ion-icon name="menu"></ion-icon>
+      <ion-icon name="options"></ion-icon>
     </button>
-    <ion-title>Home</ion-title>
+    <ion-title>Ma liste de courses</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <h3>Ionic Menu Starter</h3>
+<ion-content>
 
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will show you the way.
-  </p>
+  <ion-list>
+    <ion-item-divider>
+      Item Divider 1
+    </ion-item-divider>
+    <button ion-item *ngFor="let item of items" (click)="afficher()">
+      <ion-icon name="ios-close" item-end></ion-icon>
+      {{item.title}}
+      
+    </button>
+    <ion-item-divider>
+      Item Divider
+    </ion-item-divider>
+    <ion-item>
+      Item 3
+    </ion-item>
+    <ion-item>
+      Item 4
+    </ion-item>
 
-  <button ion-button secondary menuToggle>Toggle Menu</button>
+    <ion-item *ngFor="let item of items" (click)="afficher()">
+      {{item.title}}
+      
+        {{item.note}}
+      
+      <button ion-button icon-only item-end>
+        <ion-icon name="ios-close"></ion-icon>
+      </button>
+    </ion-item>
+
+  </ion-list>
+
+
 </ion-content>
