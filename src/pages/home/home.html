@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
     <button ion-button menuToggle>
-      <ion-icon name="options"></ion-icon>
+      <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Ma liste de courses</ion-title>
   </ion-navbar>
@@ -9,36 +9,43 @@
 
 <ion-content>
 
-  <ion-list>
-    <ion-item-divider>
-      Item Divider 1
-    </ion-item-divider>
-    <button ion-item *ngFor="let item of items" (click)="afficher()">
-      <ion-icon name="ios-close" item-end></ion-icon>
-      {{item.title}}
-      
+  <ion-item>
+    <ion-input [(ngModel)]="article" type="text" placeholder="Ajouter un article"></ion-input>>
+    
+    <button ion-button item-end (click)="clickSpeak()">
+      <ion-icon name="mic"></ion-icon>
     </button>
-    <ion-item-divider>
-      Item Divider
-    </ion-item-divider>
-    <ion-item>
-      Item 3
-    </ion-item>
-    <ion-item>
-      Item 4
-    </ion-item>
+    <button ion-button item-end (click)="clickAdd()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-item>
 
-    <ion-item *ngFor="let item of items" (click)="afficher()">
-      {{item.title}}
+  <ion-item>
+    <ion-input [(ngModel)]="qty" type="text" placeholder="Quantité"></ion-input>
+  </ion-item>
+
+  <ion-card>
+    <ion-list>
       
-        {{item.note}}
-      
-      <button ion-button icon-only item-end>
-        <ion-icon name="ios-close"></ion-icon>
-      </button>
-    </ion-item>
+      <ion-item *ngFor="let item of items">
+        
+        <div (click)='afficher()'>
+          <div class='item-titre'>
+            {{item.title}}
+          </div>
+          
+          <div class="item-note" item-end>
+            {{item.note}}
+          </div>
+        </div>
 
-  </ion-list>
+        <button ion-button icon-only clear item-end (click)="clickDelete()">
+          <ion-icon name="close"></ion-icon>
+        </button>
 
+      </ion-item>
+
+    </ion-list>
+  </ion-card> 
 
 </ion-content>
