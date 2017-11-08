@@ -9,43 +9,54 @@
 
 <ion-content>
 
-  <ion-item>
-    <ion-input [(ngModel)]="article" type="text" placeholder="Ajouter un article"></ion-input>>
-    
-    <button ion-button item-end (click)="clickSpeak()">
-      <ion-icon name="mic"></ion-icon>
-    </button>
-    <button ion-button item-end (click)="clickAdd()">
-      <ion-icon name="add"></ion-icon>
-    </button>
-  </ion-item>
+  <ion-card>
+    <ion-item>
+      <ion-input [(ngModel)]="article" type="text" placeholder="Ajouter un article"></ion-input>>
+      
+      <button ion-button item-start (click)="clickSpeak()">
+        <ion-icon name="mic"></ion-icon>
+      </button>
+      <button ion-button item-end (click)="clickAdd()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-item>
 
-  <ion-item>
-    <ion-input [(ngModel)]="qty" type="text" placeholder="Quantité"></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="qty" type="text" placeholder="Quantité"></ion-input>
+    </ion-item>
+  </ion-card>
 
   <ion-card>
-    <ion-list>
-      
-      <ion-item *ngFor="let item of items">
+    <ion-scroll scrollY="true">
+      <!--Iteration on Categories -->
+      <ion-list *ngFor="let cat of categories">
+        <ion-item-divider  color="light">
+            {{cat.title}}
+        </ion-item-divider>
         
-        <div (click)='afficher()'>
-          <div class='item-titre'>
-            {{item.title}}
-          </div>
-          
-          <div class="item-note" item-end>
-            {{item.note}}
-          </div>
-        </div>
+        <!--Iteration on items -->
+        <ion-list>          
+          <ion-item *ngFor="let item of items">
+            
+            <div (click)='afficher()'>
+              <div class='item-titre'>
+                {{item.title}}
+              </div>
+              
+              <div class="item-note" item-end>
+                {{item.note}}
+              </div>
+            </div>
 
-        <button ion-button icon-only clear item-end (click)="clickDelete()">
-          <ion-icon name="close"></ion-icon>
-        </button>
+            <button ion-button icon-only clear item-end (click)="clickDelete()">
+              <ion-icon name="close"></ion-icon>
+            </button>
 
-      </ion-item>
+          </ion-item>
 
-    </ion-list>
+        </ion-list>
+      </ion-list>
+    </ion-scroll>
   </ion-card> 
 
 </ion-content>

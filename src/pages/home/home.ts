@@ -10,6 +10,7 @@ export class HomePage {
   article: string;
   qty: string;
   items: Array<{title: string, note: string}>;
+  categories: Array<{title: string}>;
 
   constructor(
     public navCtrl: NavController, 
@@ -17,21 +18,23 @@ export class HomePage {
     public alertCtrl: AlertController) {
 
     this.items = [];
+    this.categories = [];
     
-    for (let i = 1; i < 11; i++) {
+    for (let i = 1; i < 5; i++) {
       this.items.push({
         title: 'Article ' + i,
         note: 'Qté : ' + i
       });
     }
+
+    for (let i = 1; i < 4; i++) {
+      this.categories.push({
+        title: 'Catégorie ' + i
+      });
+     // console.log("categorie"+i);
+    }
   }
 
-  itemTapped1(event, item) {
-    // That's right, we're pushing to ourselves!
-    this.navCtrl.push(HomePage, {
-      item: item
-    });
-  }
 
   afficher() {
     console.log("Hello");
