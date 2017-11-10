@@ -28,35 +28,51 @@
 
   <ion-card>
     <ion-scroll scrollY="true">
-      <!--Iteration on Categories -->
+        <!--Iteration on Categories -->
       <ion-list *ngFor="let cat of categories">
         <ion-item-divider  color="light">
             {{cat.title}}
         </ion-item-divider>
-        
+
         <!--Iteration on items -->
         <ion-list>          
-          <ion-item *ngFor="let item of items">
-            
-            <div (click)='afficher()'>
-              <div class='item-titre'>
-                {{item.title}}
-              </div>
+            <ion-item *ngFor="let item of items">
               
-              <div class="item-note" item-end>
-                {{item.note}}
+              <div (click)='afficher()'>
+                <div class='item-titre'>
+                  {{item.title}}
+                </div>
+                
+                <div class="item-note" item-end>
+                  {{item.note}}
+                </div>
               </div>
-            </div>
-
-            <button ion-button icon-only clear item-end (click)="clickDelete()">
-              <ion-icon name="close"></ion-icon>
-            </button>
-
-          </ion-item>
-
+  
+              <button ion-button icon-only clear item-end (click)="clickDelete()">
+                <ion-icon name="close"></ion-icon>
+              </button>
+  
+            </ion-item>
+  
+          </ion-list>
         </ion-list>
-      </ion-list>
     </ion-scroll>
   </ion-card> 
+
+  <ion-footer no-border>
+      <ion-toolbar  no-border-top>
+          <ion-segment [(ngModel)]="apps">
+              <ion-segment-button value="liste">
+                Liste
+              </ion-segment-button>
+              <ion-segment-button value="articles">
+                Articles
+              </ion-segment-button>
+              <ion-segment-button value="categorie">
+                Catégories
+              </ion-segment-button>
+        </ion-segment>
+      </ion-toolbar>
+    </ion-footer>
 
 </ion-content>
