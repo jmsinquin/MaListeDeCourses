@@ -1,0 +1,31 @@
+<ion-header>
+    <ion-navbar>
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>{{ openMode }} un article</ion-title>
+    </ion-navbar>
+</ion-header>
+      
+<ion-content>
+
+    <ion-item>
+        <ion-input #input [(ngModel)]="article" type="text" placeholder="Ajouter un article"></ion-input>>
+    </ion-item>
+
+    <ion-card>
+        <ion-list radio-group [(ngModel)]="refIdCat">
+            <ion-list-header>
+                Choisir une catégorie
+            </ion-list-header>
+            <ion-item *ngFor="let cat of tabCat">
+                <ion-label>{{cat.categorie}}</ion-label>
+                <ion-radio value={{cat.idCat}}></ion-radio>
+            </ion-item>
+        </ion-list>
+    </ion-card>
+
+    <ion-item>
+        <button ion-button  item-end light (tap)='addArticle()'>Valider</button>
+    </ion-item>
+</ion-content>
