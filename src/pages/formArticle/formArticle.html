@@ -10,22 +10,26 @@
 <ion-content>
 
     <ion-item>
-        <ion-input #input [(ngModel)]="article" type="text" placeholder="Ajouter un article"></ion-input>>
+        <!--<ion-input #input [(ngModel)]="article" type="text" placeholder="Ajouter un article"></ion-input>>-->
+        <ion-input [(ngModel)]="article" type="text" placeholder="Ajouter un article"></ion-input>>
     </ion-item>
-
+    <p padding>Sélectionner une catégorie :</p>
     <ion-card>
-        <ion-list radio-group [(ngModel)]="refIdCat">
-            <ion-list-header>
-                Choisir une catégorie
-            </ion-list-header>
-            <ion-item *ngFor="let cat of tabCat">
-                <ion-label>{{cat.categorie}}</ion-label>
-                <ion-radio value={{cat.idCat}}></ion-radio>
-            </ion-item>
-        </ion-list>
+    
+        <ion-scroll scrollY="true">
+            <ion-list radio-group [(ngModel)]="refIdCat">
+                <!-- <ion-list-header>
+                    Choisir une catégorie
+                </ion-list-header> -->
+                <ion-item *ngFor="let cat of tabCat">
+                    <ion-label>{{cat.categorie}}</ion-label>
+                    <ion-radio value={{cat.idCat}}></ion-radio>
+                </ion-item>
+            </ion-list>
+        </ion-scroll>
     </ion-card>
 
     <ion-item>
-        <button ion-button  item-end light (tap)='addArticle()'>Valider</button>
+        <button ion-button  item-end light (tap)='addArticle()'>{{ openMode }}</button>
     </ion-item>
 </ion-content>

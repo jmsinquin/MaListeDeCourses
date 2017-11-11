@@ -1,4 +1,5 @@
-import { Component, ViewChild  } from '@angular/core';
+//import { Component, ViewChild  } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController } from 'ionic-angular';
 
 
@@ -10,7 +11,7 @@ import { NavController, NavParams, AlertController } from 'ionic-angular';
 
 export class FormArticlePage {
   //ViewChild pour accéder aux objets de la page html (ici le input)
-  @ViewChild('input') myInput: Input;
+  //@ViewChild('input') myInput: Input;
   tabCat: Array<{idCat: number, categorie: string}>;
   idArt: number;
   article: string;
@@ -26,7 +27,6 @@ export class FormArticlePage {
     this.article = navParams.get('article');
     this.refIdCat = navParams.get('refIdCat');
     this.openMode = navParams.get('openMode');
-    console.log(this.openMode);
     this.setCategories();
   }
 
@@ -45,7 +45,7 @@ export class FormArticlePage {
   }
 
   private addArticle() {
-    if (this.article != null && this.idCat !=-1) {
+    if (this.article != null && this.refIdCat !=-1) {
       console.log(this.article + ' ajouté (id catégorie=' + this.refIdCat + ')');
       //Return to previous page
       this.navCtrl.pop();
@@ -71,7 +71,7 @@ export class FormArticlePage {
     });
     alert.present();
   }
-
+/*
   ionViewDidLoad() {
     this.focusInput();
   }
@@ -80,4 +80,5 @@ export class FormArticlePage {
   focusInput() {
     setTimeout(() => { this.myInput.setFocus(); }, 500);
   }
+*/
 }

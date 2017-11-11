@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController } from 'ionic-angular';
 
+// Pages en relation
 import { FormArticlePage } from '../formArticle/formArticle';
 
 @Component({
@@ -14,11 +15,7 @@ export class ArticlePage {
   tabCat: Array<{idCat: number, categorie: string}>;
   selectedItem: any;
   filterContain: string;
-  openMode: string;
-  //testRadioOpen: boolean;
-  //testRadioResult;
-
-  ngOnInit() {}
+  //openMode: string;
 
   constructor(
     public navCtrl: NavController, 
