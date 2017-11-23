@@ -10,25 +10,29 @@
       </button>
     </ion-buttons>
   </ion-navbar>
-  <ion-searchbar placeholder="Rechercher" (ionInput)="filterArticles($event)" [showCancelButton]="true" [autocomplete]="on"
+  <!-- <ion-searchbar placeholder="Rechercher" (ionInput)="filterArticles($event)" [showCancelButton]="true" [autocomplete]="on"
     [spellcheck]="true" [(ngModel)]='filterContain'>
-  </ion-searchbar>
+  </ion-searchbar> -->
 
 </ion-header>
 
-<ion-content>
+<ion-content padding>
 
-  <ion-card>
-    <!-- <ion-scroll scrollY="true"> -->
+ <!--  <ion-card>
+    <ion-scroll scrollY="true"> -->
       <!--Iteration on Categories -->
-      <ion-list>
-        <ion-item *ngFor='let cat of toto'>
+      <ion-list *ngFor='let cat of tabListe'>
+        <ion-list-header color="primary">     
           {{ cat.categorie }}
-          <ion-item *ngFor='let det of cat.detail'> 
-            {{ det.article }}
-          </ion-item>
-        </ion-item>
+        </ion-list-header>
+          <ion-item  *ngFor='let detail of cat.sTab'>           
+            {{ detail.article }}  
+            <div class='quantite' item-end>{{detail.qty}}</div>
+              <button ion-button icon-only clear item-end (tap)="removeArticle($event, detail)">
+                <ion-icon name="close"></ion-icon>
+              </button>           
+          </ion-item>     
       </ion-list>
-    <!-- </ion-scroll> -->
-  </ion-card>
+    <!-- </ion-scroll>
+  </ion-card> -->
 </ion-content>

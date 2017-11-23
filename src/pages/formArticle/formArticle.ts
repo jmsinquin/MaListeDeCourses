@@ -1,7 +1,9 @@
 //import { Component, ViewChild  } from '@angular/core';
 import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController } from 'ionic-angular';
-
+import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
+// Nom de la base de donnée
+const DB_NAME : string = 'listeCourses.db';
 
 @Component({
   selector: 'page-formArticle',
@@ -17,36 +19,71 @@ export class FormArticlePage {
   article: string;
   refIdCat: number;
   openMode: string;
+  dbase: SQLiteObject;
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams,
-    public alertCtrl: AlertController) {
+    public alertCtrl: AlertController,
+    private sqlite: SQLite) {
     //Recupération des paramètres passé si en mode edit
     this.idArt = navParams.get('idArt');
     this.article = navParams.get('article');
     this.refIdCat = navParams.get('refIdCat');
     this.openMode = navParams.get('openMode');
-    this.setCategories();
+    //this.setCategories();
   }
 
-  //A modifier par une requête SQL
-  setCategories() {
-    this.tabCat=[];
-    this.tabCat.push({idCat: 0, categorie: 'Vrac'});
-    this.tabCat.push({idCat: 1, categorie: 'Boucher'});
-    this.tabCat.push({idCat: 2, categorie: 'Boulangerie'});
-    this.tabCat.push({idCat: 3, categorie: 'Poissonnerie'});
-    this.tabCat.push({idCat: 4, categorie: 'Sous vide'});
-    this.tabCat.push({idCat: 5, categorie: 'Fruits et légumes'});
-    this.tabCat.push({idCat: 6, categorie: 'Papeterie'});
-    this.tabCat.push({idCat: 7, categorie: 'Droguerie'});
-    this.tabCat.push({idCat: 8, categorie: 'Entretien'});
+  ionViewDidLoad() {
+    this.createDB();
   }
 
-  private addArticle() {
+  private createDB() : void {
+    this.sqlite.create({
+      name: DB_NAME,
+      location: 'default'
+    }).then((db: SQLiteObject) => { 
+      //console.log('Base créée');
+      this.dbase = db;
+      this.setDatas();
+      })
+    .catch(e => "Erreur lors de la création de la base : " + e);  
+  }
+
+  private setDatas() {
+    // Requête sélection : afficher la liste des courses
+    var qDef="SELECT * FROM CATEGORIES ORDER BY Cat ASC";
+    this.dbase.executeSql(qDef, {})
+    .then(res => {
+      this.initTab(res);
+    })
+    .catch(e => console.log("Erreur setDatas : " + e + " " + e.description));
+  }
+
+   private initTab(res : any){
+    this.tabCat = [];
+    for(var i=0; i<res.rows.length; i++) {
+      this.tabCat.push({idCat: res.rows.item(i).idCat, categorie: res.rows.item(i).Cat });
+    }
+   }
+
+  addArticle() {
     if (this.article != null && this.refIdCat !=-1) {
-      console.log(this.article + ' ajouté (id catégorie=' + this.refIdCat + ')');
+      var qDef="";
+      if (this.openMode == "Ajouter") {
+        // Requête INSERT INTO
+        qDef="INSERT INTO ARTICLES (Intitule, fkIdCat) VALUES('" + this.article + "', " + this.refIdCat + ")";
+      } else {
+        // Requête UPDATE
+        qDef="UPDATE ARTICLES SET Intitule = '" + this.article + "', fkIdCat=" + this.refIdCat + " WHERE idArt=" + this.idArt;
+      }
+      console.log(qDef);
+      this.dbase.executeSql(qDef, {})
+      .then(res => {
+        console.log(this.article + ' ajouté (id catégorie=' + this.refIdCat + ')');
+        this.setDatas();
+        })
+      .catch(e => console.log("Erreur lors de l'ajout de l\'article : " + e + " " + e.description));
       //Return to previous page
       this.navCtrl.pop();
     } else {

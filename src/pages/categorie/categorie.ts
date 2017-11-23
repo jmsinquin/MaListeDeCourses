@@ -1,51 +1,80 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController } from 'ionic-angular';
+// Import de SQLite
+import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
+// Nom de la base de donnée
+const DB_NAME : string = 'listeCourses.db';
 
 @Component({
   selector: 'page-categorie',
   templateUrl: 'categorie.html'
 })
+
 export class CategoriePage {
   items: Array<string>;
   tabCat: Array<{idCat: number, categorie: string}>;
   selectedItem: any;
   filterContain: string;
+  dbase: SQLiteObject;
 
-  ngOnInit() {}
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams,
-    public alertCtrl: AlertController) {
+    public alertCtrl: AlertController,
+    private sqlite: SQLite) {
     
     this.filterContain="";
-    this.setCategories();
+    
   }
 
-  setCategories() {
-    this.tabCat=[];
-    this.tabCat.push({idCat: 0, categorie: 'Vrac'});
-    this.tabCat.push({idCat: 1, categorie: 'Boucher'});
-    this.tabCat.push({idCat: 2, categorie: 'Boulangerie'});
-    this.tabCat.push({idCat: 3, categorie: 'Poissonnerie'});
-    this.tabCat.push({idCat: 4, categorie: 'Sous vide'});
-    this.tabCat.push({idCat: 5, categorie: 'Fruits et légumes'});
-    this.tabCat.push({idCat: 6, categorie: 'Papeterie'});
-    this.tabCat.push({idCat: 7, categorie: 'Droguerie'});
-    this.tabCat.push({idCat: 8, categorie: 'Entretien'});
+  ionViewDidLoad() {
+    this.createDB();
   }
+
+  private createDB() : void {
+    this.sqlite.create({
+      name: DB_NAME,
+      location: 'default'
+    }).then((db: SQLiteObject) => { 
+      //console.log('Base créée');
+      this.dbase = db;
+      this.setDatas();      
+      })
+    .catch(e => "Erreur lors de la création de la base : " + e);  
+  }
+
+  private setDatas() {
+    // Requête sélection : afficher la liste des courses
+    this.dbase.executeSql('SELECT * FROM CATEGORIES ORDER BY Cat ASC', {})
+    .then(res => {
+      this.initTab(res);
+    })
+    .catch(e => console.log("Erreur setDatas : " + e + " " + e.description));
+  }
+
+   private initTab(res : any){
+    this.tabCat = [];
+    for(var i=0; i<res.rows.length; i++) {
+      this.tabCat.push({idCat: res.rows.item(i).idCat, categorie: res.rows.item(i).Cat });
+    }
+   }
 
   filterCategories(ev: any) {
-    this.setCategories();
-    let val = ev.target.value;
-
-    if (val && val.trim() !== '') {
-      this.tabCat = this.tabCat.filter(
-        function(item) {
-          return item.categorie.toLowerCase().includes(val.toLowerCase()); 
-        }
-      );
-    }
+    //this.setCategories();
+    this.dbase.executeSql('SELECT * FROM CATEGORIES ORDER BY Cat ASC', {})
+    .then(res => {
+      this.initTab(res);
+      let val = ev.target.value;
+      if (val && val.trim() !== '') {
+        this.tabCat = this.tabCat.filter(
+          function(item) {
+            return item.categorie.toLowerCase().includes(val.toLowerCase()); 
+          }
+        );
+      }
+    })
+    .catch(e => console.log("Erreur lors du filtrage : " + e + " " + e.description));
   }
 
   addCategorie() {
@@ -68,14 +97,18 @@ export class CategoriePage {
         {
           text: 'OK',
           handler: data => {
-            //console.log(data.tboxCategorie);
+            // Requête ajout
+            this.dbase.executeSql("INSERT INTO CATEGORIES(Cat) VALUES('" + data.tboxCategorie + "')", {})
+            .then(res => {
             console.log("Catégorie " + data.tboxCategorie + " ajoutée");
+            this.setDatas();
+            })
+            .catch(e => console.log("Erreur lors de l'ajout de la catégorie : " + e + " " + e.description));
           }
         }
       ]
     });
     alert.present();
-    //console.log("Catégorie ajoutée");
   }
 
   deleteCategorie(event, item) {
@@ -92,7 +125,20 @@ export class CategoriePage {
         {
           text: 'Supprimer',
           handler: () => {
-            console.log("Catégorie " + item.categorie + " supprimée (id=" + item.idCat + ")");
+            this.dbase.executeSql('PRAGMA foreign_keys=ON', {})
+            .then(res => {
+              // Requête Suppression de la catégorie à supprimer
+              var qDefCat: string =  "DELETE FROM CATEGORIES WHERE idCat=" + item.idCat;
+              console.log(qDefCat);
+              this.dbase.executeSql(qDefCat, {})
+              .then(res => {
+                console.log("Catégorie " + item.categorie + " supprimée (id=" + item.idCat + ")");
+                this.filterContain = "";
+                this.setDatas();
+              })
+              .catch(f => console.log("Erreur lors de la suppression de la catégorie : " + f + " " + f.description));
+            })
+            .catch(e => console.log("Erreur PRAMA : " + e + " " + e.description));
           }
         }
       ]
@@ -122,8 +168,13 @@ export class CategoriePage {
           text: 'OK',
           handler: data => {
             if (data.tboxCategorie != '') {
-              console.log(data.tboxCategorie);
-              console.log("Catégorie " + item.categorie + " modifiée (id=" + item.idCat + ")");
+              this.dbase.executeSql("UPDATE CATEGORIES SET Cat ='" + data.tboxCategorie + "' WHERE idCat=" + item.idCat, {})
+              .then(res => {
+                console.log("Catégorie " + item.categorie + " modifiée (id=" + item.idCat + ")");
+                this.filterContain = "";
+                this.setDatas();
+              })
+              .catch(e => console.log("Erreur lors de l'édition de la catégorie : " + e + " " + e.description));
             }             
           }
         }
@@ -132,19 +183,4 @@ export class CategoriePage {
     alert.present();
     
   }
-
-  itemTapped(event, item) {
-    console.clear();
-    // Affiche l'id de la sélection
-    console.log("id : " + item.idCat);
-    // Affiche la catégorie de la sélection
-    console.log("Catégorie : " + item.categorie);
-    // Affiche le nombre d'éléments dans la liste
-    console.log("Nbre d'éléments : " + this.tabCat.length);
-    // Affiche le filtre
-    console.log("Filtre : " + this.filterContain);
-
-  }
-
-
 }

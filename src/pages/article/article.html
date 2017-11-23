@@ -10,7 +10,7 @@
             </button> 
         </ion-buttons>
     </ion-navbar>
-
+    
     <ion-searchbar 
     placeholder="Rechercher"
     (ionInput)="filterArticles($event)"
@@ -20,23 +20,27 @@
     [(ngModel)] = 'filterContain'
     >
 </ion-searchbar>
-         
+<ion-item class='item-log'>{{ logString }}</ion-item>
 </ion-header>
-      
-<ion-content>
 
+<ion-content padding>
+    
     <ion-list>
-        <ion-item *ngFor="let art of tabArt">
-            <div class='art-article'
-                (tap)="addArticleToList($event, art)"
-                (press)="editArticle($event, art)"
-            >
-                {{art.article}}
-            </div>
-            <button ion-button icon-only clear item-end (tap)="deleteArticle($event, art)">
-                <ion-icon name="close"></ion-icon>
-            </button>
-        </ion-item>
+        <ion-item-sliding *ngFor="let art of tabArt">
+            <ion-item (tap)="addArticleToList($event, art)">
+            {{art.article}}
+            </ion-item>
+            <ion-item-options side="right">
+                <button ion-button color="primary" (tap)="editArticle($event, art)">
+                    <ion-icon name="create"></ion-icon>
+                    Modif
+                </button>
+                <button ion-button color="secondary" (tap)="deleteArticle($event, art)">
+                    <ion-icon name='trash'></ion-icon>
+                    Suppr
+                </button>
+            </ion-item-options>
+        </ion-item-sliding>
     </ion-list>
 
 </ion-content>

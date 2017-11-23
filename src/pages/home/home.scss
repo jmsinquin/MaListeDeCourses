@@ -2,5 +2,19 @@ page-home {
     ion-scroll {
         height: 450px;
     }
+
+    .list-header {
+        //background-color: rgb(17, 33, 255);
+        margin-bottom: 0;
+    }
+    .item-md [item-end].quantite {
+       margin-right: 20px;
+       font-style: italic;
+       //background-color: #f12;
+        //max-height: 0 px;
+        //max-height: 0;
+    }
+
+    //div#test{background-color: #f12; }
     
 }
