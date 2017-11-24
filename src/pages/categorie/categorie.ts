@@ -46,7 +46,7 @@ export class CategoriePage {
 
   private setDatas() {
     // Requête sélection : afficher la liste des courses
-    this.dbase.executeSql('SELECT * FROM CATEGORIES ORDER BY Cat ASC', {})
+    this.dbase.executeSql('SELECT * FROM CATEGORIES ORDER BY upper(Cat) ASC', {})
     .then(res => {
       this.initTab(res);
     })
@@ -62,7 +62,7 @@ export class CategoriePage {
 
   filterCategories(ev: any) {
     //this.setCategories();
-    this.dbase.executeSql('SELECT * FROM CATEGORIES ORDER BY Cat ASC', {})
+    this.dbase.executeSql('SELECT * FROM CATEGORIES ORDER BY upper(Cat) ASC', {})
     .then(res => {
       this.initTab(res);
       let val = ev.target.value;
@@ -97,13 +97,16 @@ export class CategoriePage {
         {
           text: 'OK',
           handler: data => {
-            // Requête ajout
-            this.dbase.executeSql("INSERT INTO CATEGORIES(Cat) VALUES('" + data.tboxCategorie + "')", {})
-            .then(res => {
-            console.log("Catégorie " + data.tboxCategorie + " ajoutée");
-            this.setDatas();
-            })
-            .catch(e => console.log("Erreur lors de l'ajout de la catégorie : " + e + " " + e.description));
+            if (data.tboxCategorie != undefined && data.tboxCategorie.trim() != "") {
+              data.tboxCategorie = this.inputCheck(data.tboxCategorie);
+              // Requête ajout
+              this.dbase.executeSql("INSERT INTO CATEGORIES(Cat) VALUES('" + data.tboxCategorie + "')", {})
+              .then(res => {
+                //console.log("Catégorie " + data.tboxCategorie + " ajoutée");
+                this.setDatas();
+              })
+              .catch(e => console.log("Erreur lors de l'ajout de la catégorie : " + e + " " + e.description));
+            }
           }
         }
       ]
@@ -129,10 +132,10 @@ export class CategoriePage {
             .then(res => {
               // Requête Suppression de la catégorie à supprimer
               var qDefCat: string =  "DELETE FROM CATEGORIES WHERE idCat=" + item.idCat;
-              console.log(qDefCat);
+              //console.log(qDefCat);
               this.dbase.executeSql(qDefCat, {})
               .then(res => {
-                console.log("Catégorie " + item.categorie + " supprimée (id=" + item.idCat + ")");
+                //console.log("Catégorie " + item.categorie + " supprimée (id=" + item.idCat + ")");
                 this.filterContain = "";
                 this.setDatas();
               })
@@ -167,7 +170,9 @@ export class CategoriePage {
         {
           text: 'OK',
           handler: data => {
-            if (data.tboxCategorie != '') {
+            console.log("data.tboxCategorie : " + data.tboxCategorie);
+            if (data.tboxCategorie != undefined && data.tboxCategorie.trim() != '') {
+              data.tboxCategorie = this.inputCheck(data.tboxCategorie);
               this.dbase.executeSql("UPDATE CATEGORIES SET Cat ='" + data.tboxCategorie + "' WHERE idCat=" + item.idCat, {})
               .then(res => {
                 console.log("Catégorie " + item.categorie + " modifiée (id=" + item.idCat + ")");
@@ -181,6 +186,11 @@ export class CategoriePage {
       ]
     });
     alert.present();
-    
+  }
+
+  private inputCheck(st : string) : string {
+    st = st.trim();
+    st = st.replace(/'/g, "''");
+    return st;
   }
 }

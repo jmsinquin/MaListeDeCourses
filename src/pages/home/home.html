@@ -10,29 +10,31 @@
       </button>
     </ion-buttons>
   </ion-navbar>
-  <!-- <ion-searchbar placeholder="Rechercher" (ionInput)="filterArticles($event)" [showCancelButton]="true" [autocomplete]="on"
-    [spellcheck]="true" [(ngModel)]='filterContain'>
-  </ion-searchbar> -->
 
 </ion-header>
 
 <ion-content padding>
-
- <!--  <ion-card>
-    <ion-scroll scrollY="true"> -->
-      <!--Iteration on Categories -->
-      <ion-list *ngFor='let cat of tabListe'>
-        <ion-list-header color="primary">     
-          {{ cat.categorie }}
-        </ion-list-header>
-          <ion-item  *ngFor='let detail of cat.sTab'>           
-            {{ detail.article }}  
-            <div class='quantite' item-end>{{detail.qty}}</div>
-              <button ion-button icon-only clear item-end (tap)="removeArticle($event, detail)">
-                <ion-icon name="close"></ion-icon>
-              </button>           
-          </ion-item>     
-      </ion-list>
-    <!-- </ion-scroll>
-  </ion-card> -->
+  <div *ngIf="tabLength > 0; else elseBlock">
+    <!--Iteration on Categories -->
+    <ion-list *ngFor='let cat of tabListe'>
+      <ion-list-header color="primary">     
+        {{ cat.categorie }}
+      </ion-list-header>
+      <!--Iteration on Articles -->
+      <ion-item  *ngFor='let detail of cat.sTab'>           
+        <div class='art' (tap)='editQty($event, detail)'>
+          {{ detail.article }}
+        </div>
+        <div class='quantite' item-end (tap)='editQty($event, detail)'>
+          {{detail.qty}}
+        </div>
+        <button ion-button icon-only clear item-end (tap)="removeArticle($event, detail)">
+          <ion-icon name="close"></ion-icon>
+        </button>           
+      </ion-item>     
+    </ion-list>
+  </div>
+  <ng-template #elseBlock>
+    <button ion-button block (click)="addArticle()">Ajouter un article</button>
+  </ng-template>
 </ion-content>

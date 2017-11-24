@@ -33,7 +33,6 @@ export class ArticlePage {
 
   ionViewWillEnter() {
     //console.log('ionViewWillEnter :');
-    //console.log("dBase = " + this.dbase);
     if (this.dbase != null) {
       this.setDatasArticles();
     } else {
@@ -55,7 +54,7 @@ export class ArticlePage {
 
   private setDatasArticles() {
     // Requête sélection : afficher la liste des courses
-    this.dbase.executeSql('SELECT * FROM ARTICLES ORDER BY Intitule ASC', {})
+    this.dbase.executeSql('SELECT * FROM ARTICLES ORDER BY upper(Intitule) ASC', {})
     .then(res => {
       this.initTab(res);
     })
@@ -74,8 +73,7 @@ export class ArticlePage {
   }
 
   filterArticles(ev: any) {
-    //this.setArticles();
-    this.dbase.executeSql('SELECT * FROM ARTICLES ORDER BY Intitule ASC', {})
+    this.dbase.executeSql('SELECT * FROM ARTICLES ORDER BY upper(Intitule) ASC', {})
     .then(res => {
       this.initTab(res);
       let val = ev.target.value;
@@ -89,38 +87,6 @@ export class ArticlePage {
     })
     .catch(e => console.log("Erreur lors du filtrage des articles : " + e + " " + e.description));
   }
-
-
-/*
-  setArticles() {
-    this.tabArt=[];
-    this.tabArt.push({idArt: 0, article: 'Steak haché', refIdCat: 1});
-    this.tabArt.push({idArt: 1, article: 'Bifteak', refIdCat: 1});
-    this.tabArt.push({idArt: 2, article: 'Baguette', refIdCat: 2});
-    this.tabArt.push({idArt: 3, article: 'Brioche', refIdCat: 2});
-    this.tabArt.push({idArt: 4, article: 'Bananes', refIdCat: 5});
-    this.tabArt.push({idArt: 5, article: 'Pommes de terre', refIdCat: 5});
-    this.tabArt.push({idArt: 6, article: 'Crayon HB', refIdCat: 6});
-    this.tabArt.push({idArt: 7, article: 'Serpillère', refIdCat: 8});
-    this.tabArt.push({idArt: 8, article: 'Produit anti-fourmis', refIdCat: 7});
-    this.tabArt.push({idArt: 9, article: 'Passer à la banque', refIdCat: 0});
-    this.tabArt.push({idArt: 10, article: 'Trouver un cadeau pour Bébert', refIdCat: 0});
-    this.tabArt.push({idArt: 11, article: 'Pile AAA', refIdCat: 0});
-  }
-
-  setCategories() {
-    this.tabCat=[];
-    this.tabCat.push({idCat: 0, categorie: 'Vrac'});
-    this.tabCat.push({idCat: 1, categorie: 'Boucher'});
-    this.tabCat.push({idCat: 2, categorie: 'Boulangerie'});
-    this.tabCat.push({idCat: 3, categorie: 'Poissonnerie'});
-    this.tabCat.push({idCat: 4, categorie: 'Sous vide'});
-    this.tabCat.push({idCat: 5, categorie: 'Fruits et légumes'});
-    this.tabCat.push({idCat: 6, categorie: 'Papeterie'});
-    this.tabCat.push({idCat: 7, categorie: 'Droguerie'});
-    this.tabCat.push({idCat: 8, categorie: 'Entretien'});
-  }
-*/
 
   addArticle() {
     // Open the page in mode Add
@@ -149,7 +115,7 @@ export class ArticlePage {
               var qDef="DELETE FROM ARTICLES WHERE idArt=" + item.idArt;
               this.dbase.executeSql(qDef, {})
               .then(res => {
-                console.log("Article " + item.article + " supprimée (id=" + item.idArt + ")");
+                //console.log("Article " + item.article + " supprimée (id=" + item.idArt + ")");
                 this.filterContain = "";
                 this.setDatasArticles();
               })
@@ -170,26 +136,39 @@ export class ArticlePage {
   }
 
   addArticleToList(event, item) {
-    //console.clear();
-    var qDef="INSERT INTO COURSES (fkIdArt, qty) VALUES(" + item.idArt + ", '" + "1 pièce" + "')";
-    console.log(qDef);
-    this.dbase.executeSql(qDef, {})
-    .then(res => {
-      this.logString = item.article + " ajouté à la liste";
-    })
-    .catch(e => console.log("Erreur insertion dans liste : " + e + " " + e.description));
-    
-    /** 
-    // Affiche l'id de la sélection
-    console.log("id : " + item.idArt);
-    // Affiche la article de la sélection
-    console.log("Article : " + item.article);
-    // Affiche le nombre d'éléments dans la liste
-    console.log("Nbre d'éléments : " + this.tabArt.length);
-    // Affiche le filtre
-    console.log("Filtre : " + this.filterContain);
-    */
-
-    //console.log("Article " + item.article + " ajouté à la liste des courses (id=" + item.idArt + ")");
+    let prompt = this.alertCtrl.create({
+      //title: 'Login',
+      message: "Indiquer la quantité à prendre",
+      inputs: [
+        {
+          name: 'qty',
+          placeholder: 'Quantité'
+        },
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Ajouter',
+          handler: data => {
+            var qDef="INSERT INTO COURSES (fkIdArt, qty) VALUES(" + item.idArt + ", '" + data.qty + "')";
+            //console.log(qDef);
+            this.dbase.executeSql(qDef, {})
+            .then(res => {
+              this.logString = item.article + " ajouté à la liste";
+              if (data.qty != '') {
+                this.logString = this.logString + " (Qté :" + data.qty + ")";
+              }
+            })
+            .catch(e => console.log("Erreur insertion dans liste : " + e + " " + e.description));
+          }
+        }
+      ]
+    });
+    prompt.present();    
   }
 }

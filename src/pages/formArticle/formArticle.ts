@@ -1,7 +1,10 @@
-//import { Component, ViewChild  } from '@angular/core';
 import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController } from 'ionic-angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
+
+// Pages en relation
+import { CategoriePage } from '../categorie/categorie';
+
 // Nom de la base de donnée
 const DB_NAME : string = 'listeCourses.db';
 
@@ -12,8 +15,6 @@ const DB_NAME : string = 'listeCourses.db';
 
 
 export class FormArticlePage {
-  //ViewChild pour accéder aux objets de la page html (ici le input)
-  //@ViewChild('input') myInput: Input;
   tabCat: Array<{idCat: number, categorie: string}>;
   idArt: number;
   article: string;
@@ -31,11 +32,19 @@ export class FormArticlePage {
     this.article = navParams.get('article');
     this.refIdCat = navParams.get('refIdCat');
     this.openMode = navParams.get('openMode');
-    //this.setCategories();
   }
 
   ionViewDidLoad() {
     this.createDB();
+  }
+
+  ionViewWillEnter() {
+    //console.log('ionViewWillEnter :');
+    if (this.dbase != null) {
+      this.setDatas();
+    } else {
+      this.createDB();
+    }
   }
 
   private createDB() : void {
@@ -68,7 +77,10 @@ export class FormArticlePage {
    }
 
   addArticle() {
-    if (this.article != null && this.refIdCat !=-1) {
+    //console.log("Article : " + this.article + " / refIdCat : " + this.refIdCat);
+    if (this.article != undefined && this.article.trim() != "" && this.refIdCat != undefined) {
+      this.article = this.inputCheck(this.article);
+      //console.log("Article : " + this.article);
       var qDef="";
       if (this.openMode == "Ajouter") {
         // Requête INSERT INTO
@@ -77,27 +89,26 @@ export class FormArticlePage {
         // Requête UPDATE
         qDef="UPDATE ARTICLES SET Intitule = '" + this.article + "', fkIdCat=" + this.refIdCat + " WHERE idArt=" + this.idArt;
       }
-      console.log(qDef);
+      //console.log(qDef);
       this.dbase.executeSql(qDef, {})
       .then(res => {
-        console.log(this.article + ' ajouté (id catégorie=' + this.refIdCat + ')');
+        //console.log(this.article + ' ajouté (id catégorie=' + this.refIdCat + ')');
         this.setDatas();
         })
       .catch(e => console.log("Erreur lors de l'ajout de l\'article : " + e + " " + e.description));
       //Return to previous page
       this.navCtrl.pop();
     } else {
-      if (this.article == null) {
-        //Message renseigner article
-        this.messageErreur("Renseigner l'article !")
-        //Donner focus sur la inputbox
-        //Ne fonctionne pas (perte focus après avoir clique OK)
-        //this.focusInput(this.myInput); 
-      } else {
-        //Message renseigner une catégorie
+      if (this.refIdCat == undefined) {
         this.messageErreur("Renseigner la catégorie !")
+      } else {
+        this.messageErreur("Renseigner l'article !") 
       }
     }
+  }
+
+  addCategorie() {
+    this.navCtrl.push(CategoriePage);
   }
 
   private messageErreur(msg: string) {
@@ -108,14 +119,10 @@ export class FormArticlePage {
     });
     alert.present();
   }
-/*
-  ionViewDidLoad() {
-    this.focusInput();
-  }
 
-  //Donne le focus à l'input
-  focusInput() {
-    setTimeout(() => { this.myInput.setFocus(); }, 500);
+  private inputCheck(st : string) : string {
+    st = st.trim();
+    st = st.replace(/'/g, "''");
+    return st;
   }
-*/
 }

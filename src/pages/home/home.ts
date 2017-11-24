@@ -20,26 +20,26 @@ export class HomePage {
   tabListe : Array<{idCat: number, categorie: string, sTab: any}>;
   tabSub: Array<{idCourse: number, article: string, qty: string}>;
   dbase: SQLiteObject;
+  tabLength: number;
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams, 
     public alertCtrl: AlertController, 
     private sqlite: SQLite) { 
-      this.filterContain="";  
-      //this.createDB();  
+      this.filterContain="";   
   }
 
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad :');
+    //console.log('ionViewDidLoad :');
     this.createDB();
   }
 
 
   ionViewWillEnter() {
-    console.log('ionViewWillEnter :');
-    console.log("dBase = " + this.dbase);
+    //console.log('ionViewWillEnter :');
+    //console.log("dBase = " + this.dbase);
     if (this.dbase != null) {
       this.showDatas();
     } else {
@@ -47,20 +47,8 @@ export class HomePage {
     } 
   }
 
-  toto() {
-    console.log("************** TOTO :");
-    var qDef: string = "SELECT * FROM COURSES";
-    this.dbase.executeSql(qDef, {})
-    .then(res => {
-      for(var i=0; i<res.rows.length; i++) {
-        console.log(res.rows.item(i).idCourse + " " + res.rows.item(i).fkIdArt + " " + res.rows.item(i).qty);
-      }
-    })
-    .catch(e => "Erreur lors de l\'exécution de la requête qDef : " + e);
-  }
-
   private createDB() : void {
-    console.log('Methode createDB :');
+    //console.log('Methode createDB :');
     this.sqlite.create({
       name: DB_NAME,
       location: 'default'
@@ -74,7 +62,7 @@ export class HomePage {
   }
 
   private createTables() : void {
-    console.log('Methode createTables :');
+    //console.log('Methode createTables :');
     
     // Création ou déclaration table CATEGORIES
     this.dbase.executeSql('CREATE TABLE IF NOT EXISTS CATEGORIES (idCat INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, Cat VARCHAR(50))', {})
@@ -107,23 +95,22 @@ export class HomePage {
     var       qDefCat = "SELECT CATEGORIES.idCat, CATEGORIES.Cat ";
     qDefCat = qDefCat + "FROM (CATEGORIES INNER JOIN ARTICLES ON CATEGORIES.idCat = ARTICLES.fkIdCat) INNER JOIN COURSES ON ARTICLES.idArt = COURSES.fkIdArt ";
     qDefCat = qDefCat + "GROUP BY CATEGORIES.idCat, CATEGORIES.Cat ";
-    qDefCat = qDefCat + "ORDER BY Cat ASC";
-    console.log(qDefCat);
+    qDefCat = qDefCat + "ORDER BY upper(CATEGORIES.Cat) ASC";
+    //console.log(qDefCat);
     this.dbase.executeSql(qDefCat, {})
     .then(res => {
       var       qDefArt = "SELECT CATEGORIES.Cat, COURSES.idCourse, ARTICLES.Intitule, COURSES.qty, CATEGORIES.idCat ";
       qDefArt = qDefArt + "FROM (CATEGORIES INNER JOIN ARTICLES ON CATEGORIES.idCat = ARTICLES.fkIdCat) INNER JOIN COURSES ON ARTICLES.idArt = COURSES.fkIdArt ";
-      qDefArt = qDefArt + "ORDER BY CATEGORIES.Cat ASC, ARTICLES.Intitule ASC";
-      console.log(qDefArt);
+      qDefArt = qDefArt + "ORDER BY upper(CATEGORIES.Cat) ASC, upper(ARTICLES.Intitule) ASC";
+      //console.log(qDefArt);
       this.dbase.executeSql(qDefArt, {})
       .then(resArt => {
         this.tabListe = [];
         var j=0;  //Pour le parcours du sous-tableau
-        console.log("Req exec : ");
+        //console.log("Req exec : ");
         
         for(var i=0; i<res.rows.length; i++) {
-          console.log(res.rows.item(i).Cat);
-          //console.log(j + "->j) ");
+          //console.log(res.rows.item(i).Cat);
           this.tabSub=[];
           while ( (j<resArt.rows.length) && (res.rows.item(i).idCat == resArt.rows.item(j).idCat) ) {
             // Sous tableau :
@@ -132,7 +119,7 @@ export class HomePage {
               article: resArt.rows.item(j).Intitule, 
               qty: resArt.rows.item(j).qty
             });
-            console.log("..." + resArt.rows.item(j).Intitule + " " + resArt.rows.item(j).qty);
+            //console.log("..." + resArt.rows.item(j).Intitule + " " + resArt.rows.item(j).qty);
             j++;
           }
           // Tableau principal :
@@ -142,7 +129,8 @@ export class HomePage {
             sTab: this.tabSub
           });
         }
-        this.toto();
+        this.tabLength = this.tabListe.length;
+        //console.log("Table length : " + this.tabLength);
       })
       .catch(f => console.log("Erreur lors de la création de la requête qDefArt : " + f + " " + f.description));
     })
@@ -151,11 +139,11 @@ export class HomePage {
 
   removeArticle(event, item) {
     var qDef: string = "DELETE FROM COURSES WHERE idCourse=" + item.idCourse;
-    console.log(qDef);
+    //console.log(qDef);
     this.dbase.executeSql(qDef, {})
     .then(res => {
       this.showDatas();
-      console.log("Article " + item.article + " enlevé de la liste (id=" + item.idCourse + ")");
+      //console.log("Article " + item.article + " enlevé de la liste (id=" + item.idCourse + ")");
     })
     .catch(e => console.log("Erreur lors de la suppression de l'article dans la liste de courses : " + e + " " + e.description));
   }
@@ -163,5 +151,52 @@ export class HomePage {
   addArticle() {
     // Open the page Article
     this.navCtrl.push(ArticlePage); 
+  }
+
+  editQty(event, item) {
+    console.log("qty : " + item.qty);
+    console.log("art : " + item.article);
+    console.log("id : " + item.idCourse);
+    let alert = this.alertCtrl.create({
+      title: item.article + " :",
+      subTitle: 'Saisir la quantité :',
+      inputs: [
+        {
+          name: 'tboxQty',
+          placeholder: 'Quantité',
+          value : item.qty
+        },
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          handler: data => {
+            console.log('Opération annulée');
+          }
+        },
+        {
+          text: 'OK',
+          handler: data => {
+            data.tboxQty = this.inputCheck(data.tboxQty);
+            var qDef: string = "UPDATE COURSES SET qty ='" + data.tboxQty + "' WHERE idCourse=" + item.idCourse;
+            console.log(qDef);
+            this.dbase.executeSql(qDef, {})
+            .then(res => {
+              //console.log("Catégorie " + item.categorie + " modifiée (id=" + item.idCat + ")");
+              //this.filterContain = "";
+              this.showDatas();
+            })
+            .catch(e => console.log("Erreur lors de l'édition de la catégorie : " + e + " " + e.description));      
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+  private inputCheck(st : string) : string {
+    st = st.trim();
+    st = st.replace(/'/g, "''");
+    return st;
   }
 }

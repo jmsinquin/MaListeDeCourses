@@ -25,8 +25,8 @@ export class MyApp {
     this.pages = [
       { title: 'Liste des courses', component: HomePage },
       //{ title: 'Articles', component: ListPage },
-      { title: 'Articles', component: ArticlePage },
-      { title: 'Catégories', component: CategoriePage }
+      { title: 'Editer articles', component: ArticlePage },
+      { title: 'Editer catégories', component: CategoriePage }
     ];
 
   }
@@ -43,6 +43,7 @@ export class MyApp {
   openPage(page) {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
-    this.nav.setRoot(page.component);
+    //this.nav.setRoot(page.component);
+    this.nav.push(page.component);
   }
 }

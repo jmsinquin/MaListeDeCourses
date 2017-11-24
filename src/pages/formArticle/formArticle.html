@@ -18,14 +18,12 @@
     
         <ion-scroll scrollY="true">
             <ion-list radio-group [(ngModel)]="refIdCat">
-                <!-- <ion-list-header>
-                    Choisir une catégorie
-                </ion-list-header> -->
                 <ion-item *ngFor="let cat of tabCat">
                     <ion-label>{{cat.categorie}}</ion-label>
                     <ion-radio value={{cat.idCat}}></ion-radio>
                 </ion-item>
             </ion-list>
+            <button ion-button clear (tap)='addCategorie()'>Ajouter une catégorie</button>
         </ion-scroll>
     </ion-card>
 
