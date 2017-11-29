@@ -154,9 +154,6 @@ export class HomePage {
   }
 
   editQty(event, item) {
-    console.log("qty : " + item.qty);
-    console.log("art : " + item.article);
-    console.log("id : " + item.idCourse);
     let alert = this.alertCtrl.create({
       title: item.article + " :",
       subTitle: 'Saisir la quantité :',
@@ -179,7 +176,7 @@ export class HomePage {
           handler: data => {
             data.tboxQty = this.inputCheck(data.tboxQty);
             var qDef: string = "UPDATE COURSES SET qty ='" + data.tboxQty + "' WHERE idCourse=" + item.idCourse;
-            console.log(qDef);
+            //console.log(qDef);
             this.dbase.executeSql(qDef, {})
             .then(res => {
               //console.log("Catégorie " + item.categorie + " modifiée (id=" + item.idCat + ")");

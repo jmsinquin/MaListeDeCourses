@@ -45,7 +45,7 @@
     "@ionic/app-scripts": "3.0.1",
     "typescript": "2.3.4"
   },
-  "description": "Complètez votre liste où que vous soyez. Retrouvez la classée par rayon pendant vos achats et supprimez l'article acheté.",
+  "description": "Facilitez vos courses en grande surface avec cette liste astucieuse",
   "cordova": {
     "plugins": {
       "ionic-plugin-keyboard": {},

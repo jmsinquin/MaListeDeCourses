@@ -5,13 +5,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 // Import module SQLite
-// Installer les plugins dans le répertoire du projet d'abord ! :
-//  ionic cordova plugin add cordova-sqlite-storage
-//  npm install --save @ionic-native/sqlite
-//  ionic cordova plugin add cordova-plugin-x-toast
-//  npm install --save @ionic-native/toast
 import { SQLite } from '@ionic-native/sqlite';
-import { Toast } from '@ionic-native/toast';
 
 // Appli et Pages 
 import { MyApp } from './app.component';
@@ -44,7 +38,6 @@ import { FormArticlePage } from '../pages/formArticle/formArticle';
     StatusBar,
     SplashScreen,
     SQLite,         // Ajouté SQLight
-    Toast,          // Ajouté Toast
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
